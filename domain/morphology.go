@@ -41,3 +41,9 @@ type FeatureSet struct {
 	ID string
 	Features []Feature
 }
+
+type InflectedForm struct {
+	*LexicalItem
+	*FeatureSet
+	Hiragana string
+}

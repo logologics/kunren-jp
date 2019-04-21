@@ -18,7 +18,7 @@ var lex = Lexicon{
 			Cat: d.V,
 			Class: d.ICHIDAN,
 			Forms: map[d.Form]string{
-				d.STEM: "たべる",
+				d.DICT: "たべる",
 				d.TFORM: "たべて",
 				d.KANJI: "食べる",
 			},
@@ -27,7 +27,7 @@ var lex = Lexicon{
 			Cat: d.V,
 			Class: d.ICHIDAN,
 			Forms: map[d.Form]string{
-				d.STEM: "かう",
+				d.DICT: "かう",
 				d.TFORM: "かって",
 				d.KANJI: "買う",
 			},
