@@ -1,2 +1,5 @@
-# kunren-be
-Kunren backend
+# kunren-jp
+
+This package contains Japanese specific code
+- Morphology
+  - Generate verbal and adjectival inflections
