@@ -6,6 +6,24 @@ import (
 
 )
 
+
+func TestGeneratorRegistry(t *testing.T){
+	
+	fs := &dom.FeatureSet{}
+	fs.SetFeature(dom.Affirmative)
+
+	f, found := genReg[fs.Key()]
+
+	if f == nil  {
+		t.Errorf("Plain affirmative generated was not registered")
+	}
+
+	if !found  {
+		t.Errorf("Plain affirmative generated was not registered")
+	}
+}
+
+
 func TestGenTaberuPast(t *testing.T){
 	li := &dom.LexicalItem{
 		Cat: dom.V,
@@ -17,19 +35,21 @@ func TestGenTaberuPast(t *testing.T){
 		},
 	}
 
-	fs := &dom.FeatureSet{
-		Features: []dom.Feature{
-			dom.PLAIN, dom.PAST,
-		},
-	}
+	fs := &dom.FeatureSet{}
+	fs.SetFeature(dom.Affirmative)
+
 	
-	infl, err := gen(li, fs)
+	infl, err := Gen(li, fs)
 	if err!= nil {
 		t.Errorf("Form generation failed with error: %v", err)
 	}
 
-	expHiragana := "smthg"
-	if infl.Hiragana != expHiragana {
-		t.Errorf("Expected %v but got %v", expHiragana, infl.Hiragana)
+	if infl == nil {
+		t.Errorf("No form was generated")
+	}
+
+	expForm := "たべる"
+	if infl.Form != expForm {
+		t.Errorf("Expected %v but got %v", expForm, infl.Form)
 	}
 }

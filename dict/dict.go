@@ -39,6 +39,8 @@ var lex = Lexicon{
 func GetLexicalItem(dictForm string) (*d.LexicalItem, error) {
 	l, found := lex.Items[dictForm]
 	if !found {
-		e.New(fmt.Sprintf("Dictionary form could not be found: %v"))
+		e.New(fmt.Sprintf("Dictionary form could not be found: %v", dictForm))
 	}
+
+	return l, nil
 }
