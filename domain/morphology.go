@@ -37,7 +37,7 @@ type Feature int
 const (
 	Past Feature = iota
 	Polite
-	Affirmative
+	Negative
 )
 type FeatureSet struct {
 	bitSet big.Int

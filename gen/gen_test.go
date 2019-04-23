@@ -10,7 +10,6 @@ import (
 func TestGeneratorRegistry(t *testing.T){
 	
 	fs := &dom.FeatureSet{}
-	fs.SetFeature(dom.Affirmative)
 
 	f, found := genReg[fs.Key()]
 
@@ -24,7 +23,7 @@ func TestGeneratorRegistry(t *testing.T){
 }
 
 
-func TestGenTaberuPast(t *testing.T){
+func TestGenTaberuPresentAffirmative(t *testing.T){
 	li := &dom.LexicalItem{
 		Cat: dom.V,
 		Class: dom.ICHIDAN,
@@ -36,8 +35,6 @@ func TestGenTaberuPast(t *testing.T){
 	}
 
 	fs := &dom.FeatureSet{}
-	fs.SetFeature(dom.Affirmative)
-
 	
 	infl, err := Gen(li, fs)
 	if err!= nil {
@@ -49,6 +46,35 @@ func TestGenTaberuPast(t *testing.T){
 	}
 
 	expForm := "たべる"
+	if infl.Form != expForm {
+		t.Errorf("Expected %v but got %v", expForm, infl.Form)
+	}
+}
+
+func TestGenTaberuPresentNegative(t *testing.T){
+	li := &dom.LexicalItem{
+		Cat: dom.V,
+		Class: dom.ICHIDAN,
+		Forms: map[dom.Form]string{
+			dom.DICT: "たべる",
+			dom.TFORM: "たべて",
+			dom.KANJI: "食べる",
+		},
+	}
+
+	fs := &dom.FeatureSet{}
+	fs.SetFeature(dom.Negative)
+	
+	infl, err := Gen(li, fs)
+	if err!= nil {
+		t.Errorf("Form generation failed with error: %v", err)
+	}
+
+	if infl == nil {
+		t.Errorf("No form was generated")
+	}
+
+	expForm := "たべない"
 	if infl.Form != expForm {
 		t.Errorf("Expected %v but got %v", expForm, infl.Form)
 	}
