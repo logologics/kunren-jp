@@ -28,7 +28,7 @@ func mapGlyphLookup() {
 func mapConsVowlLookup() {
 	hiraganaConsVowel = make (map[consRow]map[vowlRow]*Hiragana)
 	for _, h := range hiraganaTable{
-		if h.consRow != noCons && h.consRow != nn {
+		if h.consRow != nn {
 			if (hiraganaConsVowel[h.consRow] == nil){
 				hiraganaConsVowel[h.consRow] = make(map[vowlRow]*Hiragana)
 			}
@@ -52,4 +52,12 @@ func LookupHiraganaByConsAndVowel(c consRow, v vowlRow) (*Hiragana, error){
 		return nil, errors.New(fmt.Sprintf("Cannot find glyph %v:%v", c, v))
 	} 	
 	return h, nil
+}
+
+func HiraganaChangeVowel(glyph string, v vowlRow) (*Hiragana, error) {
+	h, err := LookupHiraganaByGlyph(glyph)
+	if err != nil {
+		return nil, err
+	}
+	return LookupHiraganaByConsAndVowel(h.consRow, v)
 }

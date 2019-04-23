@@ -28,9 +28,7 @@ const (
 type Form string
 const (
 	DICT Form = "dictinary form"
-	TFORM Form = "t-form"
 	KANJI Form = "kanji stem"
-
 )
 
 type Feature int

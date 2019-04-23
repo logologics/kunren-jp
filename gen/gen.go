@@ -2,34 +2,9 @@ package gen
 
 import 	( 
 	"fmt"
-	"strings"
 	dom "github.com/logologics/kunren-jp/domain"
 	"github.com/pkg/errors"
 )
-
-
-var genReg map[string]func(*dom.LexicalItem, *dom.FeatureSet)(*dom.InflectedForm, error)
-
-// create register of generation functions
-func init(){
-	genReg = make(map[string]func(*dom.LexicalItem, *dom.FeatureSet)(*dom.InflectedForm, error))
-	
-	plain := &dom.FeatureSet{}
-	genReg[plain.Key()] = genPlainPresentAffirmative
-
-	plainNeg := &dom.FeatureSet{}
-	plainNeg.SetFeature(dom.Negative)
-	genReg[plainNeg.Key()] = genPlainPresentNegative
-
-	plainPast := &dom.FeatureSet{}
-	plainPast.SetFeature(dom.Past)
-	genReg[plainPast.Key()] = genPlainPastAffirmative
-
-	plainPastNeg := &dom.FeatureSet{}
-	plainPastNeg.SetFeature(dom.Past).SetFeature(dom.Negative)
-	genReg[plainPastNeg.Key()] = genPlainPasttNegative
-
-}
 
 // Gen generates a inflected form for a lexical item given the passed feature set
 func Gen(lex *dom.LexicalItem, fs *dom.FeatureSet) (*dom.InflectedForm, error){
@@ -52,35 +27,81 @@ func Gen(lex *dom.LexicalItem, fs *dom.FeatureSet) (*dom.InflectedForm, error){
 
 func genPlainPresentAffirmative(lex *dom.LexicalItem, fs *dom.FeatureSet) (*dom.InflectedForm, error){
 	form := lex.Forms[dom.DICT]
-	infl := &dom.InflectedForm {
-		LexicalItem: lex,
-		FeatureSet: fs,
-		Form: form,
-	}
-	
-	return infl, nil
+	return infl(form, lex, fs ), nil
 }
 
 func genPlainPresentNegative(lex *dom.LexicalItem, fs *dom.FeatureSet) (*dom.InflectedForm, error){
-	form := trimRu(lex.Forms[dom.DICT]) + "ない"
-	infl := &dom.InflectedForm {
-		LexicalItem: lex,
-		FeatureSet: fs,
-		Form: form,
-	}
 	
-	return infl, nil
+	var form string 
+
+	if (lex.Class == dom.ICHIDAN){
+		form = trimFinalRune(lex.Forms[dom.DICT]) + sNai
+	} else {
+		pref, suff := splitFinalRune(lex.Forms[dom.DICT])
+		suffHira, err := LookupHiraganaByGlyph(suff)
+		if err != nil {
+			return nil, err
+		}
+
+		// exception う
+		cRow := suffHira.consRow
+		if (suff == "う"){
+			cRow = w
+		}
+
+		h, err  := LookupHiraganaByConsAndVowel(cRow, a)
+		form = pref + h.glyph  + sNai
+	}
+
+	return infl(form, lex, fs ), nil
 }
 
 func genPlainPastAffirmative(lex *dom.LexicalItem, fs *dom.FeatureSet) (*dom.InflectedForm, error){
-	return nil, nil
+	
+	var form string 
 
+	if (lex.Class == dom.ICHIDAN){
+		form = trimFinalRune(lex.Forms[dom.DICT]) + sTa
+	} else {
+		pref, suff := splitFinalRune(lex.Forms[dom.DICT])
+		ch, found := taMap[suff]
+		if !found {
+			return nil, errors.New(fmt.Sprintf("Illegal final glyph om dictionary form: %v", suff))
+		}
+		form = pref + ch
+	}
+
+	return infl(form, lex, fs ), nil
 }
 
 func genPlainPasttNegative(lex *dom.LexicalItem, fs *dom.FeatureSet) (*dom.InflectedForm, error){
-	return nil, nil
+	nai, err := genPlainPresentNegative(lex, fs)
+	if err != nil {
+		return nil, err
+	}
+	
+	form := trimFinalRune(nai.Form) + sKatta
+	return infl(form, lex, fs ), nil
 }
 
-func trimRu(s string) string {
-	return strings.TrimSuffix(s, "る")
+func genPolitePresentAffirmative(lex *dom.LexicalItem, fs *dom.FeatureSet) (*dom.InflectedForm, error){
+	
+	stem, err := stem(lex)
+	if err != nil {
+		return nil, err
+	} 
+	form := stem + sMasu
+	
+	return infl(form, lex, fs ), nil
+}
+
+func genPolitePresentNegative(lex *dom.LexicalItem, fs *dom.FeatureSet) (*dom.InflectedForm, error){
+	
+	stem, err := stem(lex)
+	if err != nil {
+		return nil, err
+	} 
+	form := stem + sMasen
+
+	return infl(form, lex, fs ), nil
 }

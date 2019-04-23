@@ -25,7 +25,7 @@ var lex = Lexicon{
 		},
 		"かう" : &d.LexicalItem{
 			Cat: d.V,
-			Class: d.ICHIDAN,
+			Class: d.GODAN,
 			Forms: map[d.Form]string{
 				d.DICT: "かう",
 				d.TFORM: "かって",
