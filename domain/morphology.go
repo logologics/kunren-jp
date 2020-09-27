@@ -33,10 +33,22 @@ const (
 
 type Feature int
 const (
+	// boolean features
 	Past Feature = iota
 	Polite
 	Negative
+	// non boolean features
+	Indicative
+	Volitional
+	Imperative
+	Presumptive
+	Progressive
+	BaConditional
+	TaraConditional
+	Potential
+	Causative
 )
+
 type FeatureSet struct {
 	bitSet big.Int
 }
@@ -56,6 +68,14 @@ func (fs *FeatureSet) HasFeature(f Feature) bool {
 }
 func (fs *FeatureSet) Key() string {
 	return fs.bitSet.Text(2)
+}
+
+func MakeFeatureSet(features []Feature) *FeatureSet{
+	fs := &FeatureSet{}
+	for _, f := range features {
+		fs.SetFeature(f)
+	}
+	return fs
 }
 
 

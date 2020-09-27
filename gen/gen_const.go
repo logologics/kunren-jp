@@ -8,3 +8,5 @@ const (
 	sMasen = "ません"	
 	
 )
+
+

@@ -5,7 +5,7 @@ import "testing"
 
 func TestFeatureKey(t *testing.T){
 	fs := FeatureSet{}
-	fs.SetFeature(Polite).SetFeature(Affirmative)
+	//TODO fs.SetFeature(Polite).SetFeature(Affirmative)
 
 	expKey := "110"
 	if fs.Key() != expKey {
